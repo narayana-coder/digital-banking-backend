@@ -8,7 +8,10 @@ SECRET_KEY = config(
     "SECRET_KEY", default="django-insecure-change-this-in-production-xyz123"
 )
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "*",
+    "digital-banking-backend-uy2b.onrender.com",
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -104,7 +107,10 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://digital-banking-frontend.vercel.app",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # ── Gmail SMTP ──────────────────────────────────────────────────

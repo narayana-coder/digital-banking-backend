@@ -1,3 +1,7 @@
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -8,9 +12,12 @@ SECRET_KEY = config(
     "SECRET_KEY", default="django-insecure-change-this-in-production-xyz123"
 )
 DEBUG = config("DEBUG", default=True, cast=bool)
+
 ALLOWED_HOSTS = [
     "*",
     "digital-banking-backend-uy2b.onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
 INSTALLED_APPS = [
@@ -20,11 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third party
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    # Local apps
     "accounts",
     "banking",
 ]
@@ -32,6 +37,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,7 +91,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ── REST Framework ──────────────────────────────────────────────
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -95,7 +100,6 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 15,
 }
 
-# ── JWT ─────────────────────────────────────────────────────────
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -103,17 +107,14 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# ── CORS ────────────────────────────────────────────────────────
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://digital-banking-frontend.vercel.app",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-
-# ── Gmail SMTP ──────────────────────────────────────────────────
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -124,6 +125,5 @@ DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER", default="noreply@novapay.com")
 
 OTP_EXPIRY_MINUTES = 10
 
-# Production
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
